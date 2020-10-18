@@ -1,68 +1,166 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## About the project:
 
-## Available Scripts
+This project was a project for the application of Junior UX Developer role. In this project, React JS Library was used to build it. 
+Project goal is to create task for users and to allow users to move task cards from a board to another.
 
-In the project directory, you can run:
+## Installation:
 
-### `npm start`
+1. npm install
+2. npm start
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+GitHub Links of the Project:
+The source code of the project is in this GitHub repository:
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+https://github.com/sonmezali/trello-task-board
 
-### `npm test`
+## Architecture:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+First of all, I determined what I needed to built this project. Mainly, I specified two main components (Board and Card) and some functionality such as to click button to add card and board. 
+Basically, I started this process by using npx create-react-app react boilerplate. In here, the main component is App.js. 
+The other components are run in to App components. Moreover, App component is rendered in to ‘div’ tag with “root” id in index.html file.
 
-### `npm run build`
+```
+            ReactDOM.render(
+            <React.StrictMode>
+            <App />
+            </React.StrictMode>,
+            document.getElementById('root')
+            ); 
+```
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Then, I created Board and Card components. Board component includes every single board which is styled “div” which the task cards are nested underneath. 
+In Card component, there are the task cards which are created by user by clicking “Add Card” button. These are also “div” tags. 
+I gave a draggable feature to every single card to be easily moved to another board and an ondrop feature to every single board component to allow cards to be nested in. 
+On this point, all created cards’ details and boards’ details are kept in the states. 
+In order to carry out this, I used useState() method which is a Hook that is introduced by React in the latest versions. 
+I will explain how useState() works in the React Hooks session. Following codes show the state structure in the project: 
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+```
+            const [boards,setBoards] = useState([
+            { id: "b1", title:"Board 1" }
+            ])
+            const [cards,setCards] = useState([])
+            const [reRender, setReRender]=useState(false)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
 
-### `npm run eject`
+I wrote three functions to perform the process of moving cards. First function is in the Card component.
+This function helps me to select the target card which is to be moved and its detail such as its id. The function is called handleDragStart.
+This function is based on dragstart attribute of basic HTML element. The dragstart attribute is given to draggable element. 
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+            const handleDragStart=(e)=>{
+            const target=e.target;
+            e.dataTransfer.setData('card_id',target.id); 
+            }
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The second function is the Board component. The function is called handleDrop which corresponds to drop attribute in basic HTML element.
+This is given to the target which draggable element is nested. Following codes show structure of handleDrop function. 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+``` 
+            const handleDrop=(e)=>{
+            e.preventDefault();
+            const cardId = e.dataTransfer.getData('card_id'); 
+            props.handleDrop(cardId, props.id) 
+            }
 
-## Learn More
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The third function is in App component. This function is called updateCard. This function is used to update card details when it passes from a board to another. 
+This function is also called in to handleDrop function.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+            const updateCard=(cardId, newBoardId)=>{ 
+            cards.find(card => card.id === cardId).boardId = newBoardId; 
+            setCards(cards )
+            localStorage.setItem('cards', JSON.stringify(cards )) 
+            setReRender(!reRender)
+            }
 
-### Code Splitting
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+In this function, I used ‘localStorage.setItem()’ property to store states. Because, I was asked to save the data for later. 
+LocalStorage always keeps data unless data is cleaned up manually. Whenever user close and open the browser, user see last changes. 
+In addition to this, localStorage keeps only string data, therefore I use ‘JSON.stringfy()’ method to convert all data to a string. 
+However, in this project, stored states were originally objects. In order to convert data from string to object, I used ‘JSON.parse()’ method. 
+Also I wanted to run this method as soon as the browser is opened. For this, I took helps form another Hook which is called useEffect(). 
+I will also explain useEffect() in React Hooks section. Basically, It runs codes as soon as browser is opened. Following codes show how it works.
 
-### Analyzing the Bundle Size
+``` 
+            useEffect(() => {
+            const boardsStorage= localStorage.getItem('boards')
+            const cardsStorage= localStorage.getItem('cards')
+            boardsStorage&&setBoards(JSON.parse(boardsStorage))
+            cardsStorage&&setCards(JSON.parse(cardsStorage))
+            },[]) 
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+```
 
-### Making a Progressive Web App
+### React Hooks 
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+In this project I took advantages of using React Hooks. React Hooks are introduced by React with version 16.8. I used two very important hooks. 
+Those are useState() and useEffect(). So, what do they do? In react there are two type of components: function component and class component. 
+In previous versions function component was also called stateless component but now function component can use state with React Hooks. 
+On this point useState() helps us to use state in functional component. Following codes show how App component's structure would be if I didn't use react hooks
 
-### Advanced Configuration
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+        class App extends Component{
+            constructor(props){
+                super(props);
+                this.state={
+                boards:{ id: "b1", title:"Board 1" },
+                cards:()
 
-### Deployment
+                }
+            }
+        }
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+```
 
-### `npm run build` fails to minify
+In addition to this, each component has a lifecycle in react. This consists of three phases: Mounting, Updating, Unmounting. 
+In the previous versions, In order to complete this lifecycle, There were some method to use. componentDidMount() method one of them. 
+This method is run as soon as component rendered. Now, useEffect() hook does same thing. useEffect() is also run immediately. 
+The useEffect() method is not only equivalent of componentDidMount() method but it is also more than.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+            ```
+            useEffect(() => {
+            const boardsStorage= localStorage.getItem('boards')
+            const cardsStorage= localStorage.getItem('cards')
+            boardsStorage&&setBoards(JSON.parse(boardsStorage))
+            cardsStorage&&setCards(JSON.parse(cardsStorage))
+            },[]) 
+
+            =>
+
+            componentDidMount() {
+            const boardsStorage= localStorage.getItem('boards')
+            const cardsStorage= localStorage.getItem('cards')
+            boardsStorage&&this.state.cards=JSON.parse(boardsStorage)
+            cardsStorage&&this.state.cards=JSON.parse(cardsStorage)
+            }
+
+```
+## Design
+
+I used pure CSS code to design the project instead of any framework. I decided to use an analogous color scheme and consistent background picture. 
+I implemented a flexbox layout model to make the page responsive. 
+
+
+
+## What can be improved
+
+- Because of time constraint, I couldn't write tests for the project. Unit test could be implemented for the project.
+- I realized that naming is not very good. Naming to variables could have been better.
+- I am not quite satisfied with the function which is used for sorting the cards. It can be improved. 
+
+## Developer
+
+            Ali SONMEZ
+            React Developer
+            
+            https://github.com/sonmezali/
+            
+
