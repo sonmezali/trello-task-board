@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test App component matches snapshot 1`] = `
+<div
+  className="App"
+>
+  <header
+    className="App-header"
+  >
+    <h3
+      className="header-title"
+    >
+      Trello
+    </h3>
+  </header>
+  <main
+    className="main"
+  >
+    <div
+      className="task-board"
+      id="b1"
+      onDragOver={[Function]}
+      onDrop={[Function]}
+    >
+      <div
+        className="board-title"
+      >
+        Board 1
+      </div>
+      <div
+        className="add-card-btn"
+        data-testid="add-card"
+        onClick={[Function]}
+      >
+        <span>
+          +Add Card
+        </span>
+      </div>
+    </div>
+    <div
+      className="add-board-btn"
+      data-testid="add-board"
+      onClick={[Function]}
+      type="button"
+    >
+      <span>
+        Add Board
+      </span>
+    </div>
+  </main>
+</div>
+`;

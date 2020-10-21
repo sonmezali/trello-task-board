@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Board component matches snapshot 1`] = `
+<div
+  onDragOver={[Function]}
+  onDrop={[Function]}
+>
+  <div
+    className="board-title"
+  />
+  <div
+    className="add-card-btn"
+    data-testid="add-card"
+    onClick={[Function]}
+  >
+    <span>
+      +Add Card
+    </span>
+  </div>
+</div>
+`;
